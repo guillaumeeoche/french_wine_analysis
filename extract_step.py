@@ -52,8 +52,30 @@ for filename in filenames:
             'vsig_red_quantity', 'vsig_rose_quantity', 'total_white_quantity', 'total_red_quantity', 'total_rose_quantity', 'total_cognac_quantity', 'total_non_marketable_quantity', 'total_quantity']
 
     wine_harvest = wine_harvest.loc[(wine_harvest['department'].isna() == False) &
-                            (wine_harvest['department'] != 'TOTAUX') & ('*' in wine_harvest['department']), ]
-    
-    print(wine_harvest)
+                            (wine_harvest['department'] != 'TOTAUX') & (wine_harvest['department'].str.contains('\*') == False), ]
 
     wine_harvest.to_excel('data/harvest_by_year/harvest_by_year_clean/' + filename.split('.')[0] + '.xlsx', index=False)
+
+# All the files 
+
+filenames2 = []
+
+for path in os.listdir(dir_path):
+    # check if current path is a file
+    if os.path.isfile(os.path.join(dir_path, path)):
+        filenames2.append(path)
+print(filenames2)
+
+for filename in filenames2[3:]: 
+    wine_harvest = pd.read_excel('data/harvest_by_year/' + filename, 
+                                 skiprows=20)
+    
+    wine_harvest.columns = ['department', 'declarations_number', 'total_area', 'aop_area', 'cognac_area', 'igp_area', 'vsig_area', 
+            'aop_white_quantity', 'aop_red_quantity', 'aop_rose_quantity', 'aop_vsi_quantity', 'igp_white_quantity', 'igp_red_quantity', 'igp_rose_quantity', 'vsig_white_quantity', 
+            'vsig_red_quantity', 'vsig_rose_quantity', 'cognac_quantity', 'total_marketable_quantity', 'total_non_marketable_quantity', 'total_quantity']
+
+    wine_harvest = wine_harvest.loc[(wine_harvest['department'].isna() == False) &
+                            (wine_harvest['department'] != 'TOTAUX') & (wine_harvest['department'].str.contains('\*') == False), ]
+    print(wine_harvest)
+    wine_harvest.to_excel('data/harvest_by_year/harvest_by_year_clean/' + filename.split('.')[0] + '.xlsx', index=False)
+
